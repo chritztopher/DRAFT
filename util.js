@@ -21,10 +21,6 @@ function setTexture(name, texture) {
     textures[name] = textures[texture];
 }
 
-function resetTextureImage(name, url) {
-    textures[name] = loadTexture(gl, "assets/" + url)
-}
-
 function resetFrameBufferForTexture(textureName) {
     let texture = textures[textureName];
     let framebuffer = gl.createFramebuffer();
@@ -145,4 +141,15 @@ function loadTexture(gl, url) {
     image.src = url;
 
     return texture;
+}
+
+function updateTextureFromCanvas(textureName, canvas) {
+    if (!textures[textureName]) return;
+    
+    gl.bindTexture(gl.TEXTURE_2D, textures[textureName]);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 }

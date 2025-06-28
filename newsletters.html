@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newsletters - DRAFT</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" type="text/css" href="newsletters.css">
+    
+    <!-- Shared Utility Scripts -->
+    <script type="text/javascript" src="lib/animations.js"></script>
+    <script type="text/javascript" src="lib/time-display.js"></script>
+    <script type="text/javascript" src="lib/mobile-menu.js"></script>
+    <script type="text/javascript" src="lib/newsletters-utils.js"></script>
+</head>
+<body>
+
+<div class="newsletters-layout">
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <a href="wind-tunnel.html" class="mobile-logo-link">
+            <img src="assets/logo.webp" alt="DRAFT" class="mobile-logo">
+        </a>
+        <button class="hamburger-menu" onclick="toggleMobileMenu()">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+        </button>
+    </header>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobile-nav" onclick="closeMobileMenuOnOverlay(event)">
+        <div class="mobile-nav-content" onclick="event.stopPropagation()">
+            <a href="wind-tunnel.html" class="mobile-nav-item">Home</a>
+            <a href="#" class="mobile-nav-item active">Newsletters</a>
+            <a href="#" class="mobile-nav-item">About</a>
+            <div class="mobile-time-display">
+                <div class="mobile-time-location">Phoenix, AZ</div>
+                <div class="mobile-time-clock" id="mobile-phoenix-time"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fixed Left Sidebar -->
+    <nav class="left-sidebar">
+        <div class="sidebar-content">
+            <div class="sidebar-logo">
+                <a href="wind-tunnel.html" class="sidebar-logo-link">
+                    <img src="assets/logo.webp" alt="DRAFT" class="logo-img">
+                </a>
+            </div>
+            <div class="sidebar-nav">
+                <a href="wind-tunnel.html" class="nav-item">Home</a>
+                <a href="#" class="nav-item active">Newsletters</a>
+                <a href="#" class="nav-item">About</a>
+            </div>
+            <div class="time-display">
+                <div class="time-location">Phoenix, AZ</div>
+                <div class="time-clock" id="phoenix-time"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Right Side Content -->
+    <main class="main-content">
+        <div class="content-container">
+            <!-- Top Copy Block -->
+            <header class="page-header">
+                <div class="header-content">
+                    <div class="header-columns">
+                        <div class="header-left">
+                            <h1 class="typewriter-text">
+                                <span class="line1">Recent ideas, tools, and topics I've</span><br>
+                                <span class="line2">been digging into</span>
+                            </h1>
+                        </div>
+                        <div class="header-right">
+                            <p>christopher's ongoing thoughts from inside the work itself. Less polished insight, more thoughtful documentation.</p>
+                        </div>
+                    </div>
+                    <div class="filter-container">
+                        <select class="filter-dropdown">
+                            <option value="recent">Most Recent</option>
+                            <option value="oldest">Oldest</option>
+                            <option value="a-z">A–Z</option>
+                            <option value="z-a">Z–A</option>
+                        </select>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Newsletter Grid -->
+            <div class="newsletter-grid">
+                <!-- Newsletter Card 1 -->
+                <a href="/newsletters/how-to-automate-emails" class="newsletter-card fade-up-element">
+                    <div class="card-thumbnail"></div>
+                    <div class="card-content">
+                        <p class="card-date">June 21, 2025</p>
+                        <h2 class="card-title">How to automate your emails</h2>
+                        <p class="card-summary">Automate, execute and save time with actionable AI tools for entrepreneurs and go-getters.</p>
+                    </div>
+                </a>
+
+                <!-- Newsletter Card 2 -->
+                <a href="/newsletters/ai-regulation-framework" class="newsletter-card fade-up-element" data-delay="100">
+                    <div class="card-thumbnail"></div>
+                    <div class="card-content">
+                        <p class="card-date">June 14, 2025</p>
+                        <h2 class="card-title">AI Regulation Framework Passes Congress</h2>
+                        <p class="card-summary">New legislation sets groundbreaking precedent for AI governance and industry standards.</p>
+                    </div>
+                </a>
+
+                <!-- Newsletter Card 3 -->
+                <a href="/newsletters/quantum-computing-ml" class="newsletter-card fade-up-element" data-delay="200">
+                    <div class="card-thumbnail"></div>
+                    <div class="card-content">
+                        <p class="card-date">June 7, 2025</p>
+                        <h2 class="card-title">Quantum Computing Meets Machine Learning</h2>
+                        <p class="card-summary">IBM's quantum-AI hybrid system shows 10x performance gains in complex calculations.</p>
+                    </div>
+                </a>
+
+                <!-- Newsletter Card 4 -->
+                <a href="/newsletters/ai-native-startups" class="newsletter-card fade-up-element" data-delay="300">
+                    <div class="card-thumbnail"></div>
+                    <div class="card-content">
+                        <p class="card-date">May 31, 2025</p>
+                        <h2 class="card-title">The Rise of AI-Native Startups</h2>
+                        <p class="card-summary">New generation of companies built entirely on AI foundations are reshaping industries.</p>
+                    </div>
+                </a>
+
+                <!-- Newsletter Card 5 -->
+                <a href="/newsletters/openai-agi-milestone" class="newsletter-card fade-up-element" data-delay="400">
+                    <div class="card-thumbnail"></div>
+                    <div class="card-content">
+                        <p class="card-date">May 24, 2025</p>
+                        <h2 class="card-title">Breaking: OpenAI's Latest Model Achieves AGI Milestone</h2>
+                        <p class="card-summary">Revolutionary breakthrough in artificial general intelligence marks a turning point for the industry.</p>
+                    </div>
+                </a>
+
+                <!-- Newsletter Card 6 -->
+                <a href="/newsletters/voice-ai-revolution" class="newsletter-card fade-up-element" data-delay="500">
+                    <div class="card-thumbnail"></div>
+                    <div class="card-content">
+                        <p class="card-date">May 17, 2025</p>
+                        <h2 class="card-title">Voice AI Revolution in Customer Service</h2>
+                        <p class="card-summary">How conversational AI is transforming customer interactions across industries.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- SVG Filters for Glass Effect -->
+<svg style="display: none">
+    <filter id="sidebar-glass-distortion" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.01 0.01" numOctaves="3" seed="42" result="noise" />
+        <feGaussianBlur in="noise" stdDeviation="0.8" result="blur" />
+        <feDisplacementMap in="SourceGraphic" in2="blur" scale="8" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+</svg>
+
+</body>
+</html> 

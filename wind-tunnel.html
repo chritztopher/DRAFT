@@ -2,10 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=400">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Wind Tunnel</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" type="text/css" href="wind-tunnel.css">
 
     <script id="obstacle_render_fragment" type="x-shader/x-fragment">
@@ -14,12 +18,6 @@
         void main() {
             vec2 coords = gl_FragCoord.xy;
 
-//            if (coords.x > 200.0 && coords.x < 400.0 && coords.y > 275.0 && coords.y < 475.0) {
-//                gl_FragColor = vec4(0, 0, 0, 1);
-//            } else {
-//                gl_FragColor = vec4(1, 1, 1, 1);
-//            }
-//
             vec2 dir = coords - vec2(375.0, 375.0);
             if (length(dir) < 100.0) {
                 gl_FragColor = vec4(0, 0, 0, 1);
@@ -61,11 +59,7 @@
             vec2 obstacle_coords = vec2(coords.x / u_textureSize.x, 1.0 - coords.y / u_textureSize.y);
 
             float obstacle_val = texture2D(u_obstacle, obstacle_coords).x;
-//            if (obstacle_val < 0.5) {
-//                gl_FragColor = vec4(1, 0, 0, 0);
-//            } else {
-                gl_FragColor = texture2D(u_pressure, coords / u_textureSize);
-//            }
+            gl_FragColor = texture2D(u_pressure, coords / u_textureSize);
         }
     </script>
 
@@ -223,20 +217,6 @@
                 } else {
                     gl_FragColor = vec4(0, 0, 0, 0);
                 }
-
-//                if (coords.y > 360.0 && coords.y < 390.0) {
-//                    gl_FragColor = vec4(1, 0, 0, 0);
-//                } else {
-//                    gl_FragColor = vec4(0, 0, 0, 0);
-//                }
-
-//                if (coords.y > 355.0 && coords.y < 365.0 || coords.y > 385.0 && coords.y < 395.0) {
-//                    gl_FragColor = vec4(1, 0, 0, 0);
-//                } else if(coords.y > 335.0 && coords.y < 345.0 || coords.y > 405.0 && coords.y < 415.0) {
-//                    gl_FragColor = vec4(1, 0, 0, 0);
-//                } else {
-//                    gl_FragColor = vec4(0, 0, 0, 0);
-//                }
             } else {
                 posMat.y = mod(posMat.y, u_screenSize.y - 1.0);
                 gl_FragColor = vec4(bilerp(posMat, u_material, u_screenSize), 0, 0);
@@ -284,39 +264,49 @@
         }
 
         vec3 transfer(float wind_speed) {
-            float r_peak = 1.0;
-            float g_peak = 0.625;
-            float b_peak = 0.25;
-            float width = 1.0;
-
-            // red component definition
-            float r_comp = 0.0;
-            if (wind_speed >= r_peak) {
-                r_comp = 1.0;
+            // Custom color palette: 000000, 0f1bc5, 1cefff, ff0411, efff08, ff9a01, ffffff
+            // Convert hex colors to RGB (0-1 range)
+            vec3 color1 = vec3(0.000, 0.000, 0.000); // 000000 - black
+            vec3 color2 = vec3(0.059, 0.106, 0.773); // 0f1bc5 - dark blue
+            vec3 color3 = vec3(0.110, 0.937, 1.000); // 1cefff - cyan
+            vec3 color4 = vec3(1.000, 0.016, 0.067); // ff0411 - red
+            vec3 color5 = vec3(0.937, 1.000, 0.031); // efff08 - yellow
+            vec3 color6 = vec3(1.000, 0.604, 0.004); // ff9a01 - orange
+            vec3 color7 = vec3(1.000, 1.000, 1.000); // ffffff - white
+            
+            // Clamp wind_speed to [0, 1] range
+            float t = clamp(wind_speed, 0.0, 1.0);
+            
+            // Create smooth transitions between colors (7 colors = 6 segments)
+            vec3 finalColor;
+            
+            if (t < 0.166) {
+                // Interpolate between color1 and color2
+                float localT = t / 0.166;
+                finalColor = mix(color1, color2, localT);
+            } else if (t < 0.333) {
+                // Interpolate between color2 and color3
+                float localT = (t - 0.166) / 0.167;
+                finalColor = mix(color2, color3, localT);
+            } else if (t < 0.500) {
+                // Interpolate between color3 and color4
+                float localT = (t - 0.333) / 0.167;
+                finalColor = mix(color3, color4, localT);
+            } else if (t < 0.666) {
+                // Interpolate between color4 and color5
+                float localT = (t - 0.500) / 0.166;
+                finalColor = mix(color4, color5, localT);
+            } else if (t < 0.833) {
+                // Interpolate between color5 and color6
+                float localT = (t - 0.666) / 0.167;
+                finalColor = mix(color5, color6, localT);
             } else {
-                r_comp = boundedLerp(1.0, 0.0, (r_peak - wind_speed) / width);
+                // Interpolate between color6 and color7
+                float localT = (t - 0.833) / 0.167;
+                finalColor = mix(color6, color7, localT);
             }
-
-            // green component definition
-            float g_comp = 0.0;
-            if (wind_speed == g_peak) {
-                g_comp = 1.0;
-            } else if (wind_speed > g_peak) {
-                g_comp = boundedLerp(1.0, 0.0, (wind_speed - g_peak) / width);
-            } else {
-                g_comp = boundedLerp(1.0, 0.0, (g_peak - wind_speed) / width);
-            }
-
-            // blue component definition
-            float b_comp = 0.0;
-            if (wind_speed <= b_peak) {
-                b_comp = 1.0;
-            } else {
-                b_comp = boundedLerp(1.0, 0.0, (wind_speed - b_peak) / width);
-            }
-
-            vec3 color = vec3(r_comp, g_comp, b_comp);
-            return normalize(exp(color));
+            
+            return finalColor;
         }
 
         void main() {
@@ -354,35 +344,173 @@
     <script type="text/javascript" src="lib/GlBoilerplate.js"></script>
     <script type="text/javascript" src="util.js"></script>
     <script type="text/javascript" src="wind-tunnel.js"></script>
+    <script type="text/javascript" src="lib/vanilla-tilt.min.js"></script>
+    <script type="text/javascript" src="lib/animations.js"></script>
 </head>
 <body>
 
-<canvas id="myCanvas" width="1500px" height="750px"></canvas>
-<br>
-<button id="material" onclick="materialView()">Material View</button>
-<button id="velocity" onclick="velocityView()">Velocity View</button>
-<button id="pressure" onclick="pressureView()">Pressure View</button>
-<button id="reset" onclick="resetWindow()">Reset</button>
+<div class="wind-tunnel-container">
+    <canvas id="myCanvas" width="1500px" height="750px"></canvas>
+    
+    <!-- Fade overlays for smooth transition -->
+    <div class="fade-overlay-top"></div>
+    <div class="fade-overlay-bottom"></div>
+    
+    <!-- Glass Navbar -->
+    <nav class="glass-navbar hero-fade-element" data-hero-delay="0">
+        <div class="navbar-content">
+            <div class="logo">
+                <img src="assets/navlogo.webp" alt="DRAFT" class="logo-img">
+            </div>
+            <div class="nav-links">
+                <a href="newsletters.html" class="nav-link">newsletters</a>
+                <a href="#" class="nav-link">about</a>
+            </div>
+        </div>
+    </nav>
 
-<label for="object-select">Select Object: </label>
-<select id="object-select">
-    <option value="circle.jpg" selected>Circle</option>
-    <option value="square.jpg">Square</option>
-    <option value="octagon.jpg">Octagon</option>
-    <option value="teardrop.jpg">Tear Drop</option>
-    <option value="wing.jpg">Wing 1</option>
-    <option value="wing2.jpg">Wing 2</option>
-    <option value="wing3.jpg">Wing 3</option>
-    <option value="car.jpg">Standard Car</option>
-    <option value="van.jpg">Mini-Van Car</option>
-    <option value="oldcar.jpg">Retro Car</option>
-    <option value="airplane.jpg">Airplane</option>
-    <option value="jet.jpg">Jet Fighter</option>
-    <option value="dancer.jpg">Dancer</option>
-    <option value="evolution.jpg">Evolution</option>
-    <option value="hills.jpg">Hills</option>
-    <option value="heads.jpg">Movie Heads</option>
-</select>
+    <!-- Email Capture Card -->
+    <div class="glass-email-card hero-fade-element" data-hero-delay="300">
+        <div class="email-content">
+            <h2>Each week I share tools, projects, and lessons from the front seat of the learning curve.</h2>
+            <div class="email-input-container">
+                <input type="email" placeholder="email...." class="glass-input">
+                <button type="submit" class="ride-button">ride along</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Toggle Buttons -->
+    <div class="glass-toggle-group hero-fade-element" data-hero-delay="600">
+        <button class="glass-toggle-btn active" onclick="materialView()" data-view="material">
+            <img src="assets/material.webp" alt="Material View" class="toggle-icon-img">
+        </button>
+        <button class="glass-toggle-btn" onclick="velocityView()" data-view="velocity">
+            <img src="assets/velocity.webp" alt="Velocity View" class="toggle-icon-img">
+        </button>  
+        <button class="glass-toggle-btn" onclick="pressureView()" data-view="pressure">
+            <img src="assets/pressure.webp" alt="Pressure View" class="toggle-icon-img">
+        </button>
+    </div>
+
+
+    
+</div>
+
+<!-- Previous Newsletters Section -->
+<section class="newsletters-section">
+    <div class="newsletters-container">
+        <!-- Section Header -->
+        <div class="section-header fade-up-element">
+            <h2 class="section-title">Previous Newsletters</h2>
+        </div>
+
+        <!-- Newsletter Grid -->
+        <div class="newsletter-grid fade-up-element" data-delay="400">
+            <!-- Primary Featured Card -->
+            <a href="newsletters.html" class="newsletter-card featured-card">
+                <div class="card-thumbnail"></div>
+                <div class="card-content">
+                    <time class="card-date">Dec 15, 2024</time>
+                    <h3 class="card-headline">Breaking: OpenAI's Latest Model Achieves AGI Milestone</h3>
+                    <p class="card-summary">Revolutionary breakthrough in artificial general intelligence marks a turning point for the industry, with implications spanning from healthcare to creative industries.</p>
+                </div>
+            </a>
+
+            <!-- Side Cards Column -->
+            <div class="side-cards">
+                <a href="newsletters.html" class="newsletter-card side-card">
+                    <div class="side-card-content">
+                        <div class="side-thumbnail"></div>
+                        <div class="side-text">
+                            <time class="card-date">Dec 12, 2024</time>
+                            <h4 class="card-headline">AI Regulation Framework Passes Congress</h4>
+                            <p class="card-summary">New legislation sets groundbreaking precedent for AI governance.</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="newsletters.html" class="newsletter-card side-card">
+                    <div class="side-card-content">
+                        <div class="side-thumbnail"></div>
+                        <div class="side-text">
+                            <time class="card-date">Dec 09, 2024</time>
+                            <h4 class="card-headline">Quantum Computing Meets Machine Learning</h4>
+                            <p class="card-summary">IBM's quantum-AI hybrid system shows 10x performance gains.</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="newsletters.html" class="newsletter-card side-card">
+                    <div class="side-card-content">
+                        <div class="side-thumbnail"></div>
+                        <div class="side-text">
+                            <time class="card-date">Dec 06, 2024</time>
+                            <h4 class="card-headline">The Rise of AI-Native Startups</h4>
+                            <p class="card-summary">New generation of companies built entirely on AI foundations.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- More Button -->
+        <div class="more-section">
+            <a href="newsletters.html" class="more-button">more →</a>
+        </div>
+    </div>
+</section>
+
+<!-- Footer Section -->
+<section class="footer-section">
+    <div class="footer-container">
+        <!-- Value Proposition -->
+        <div class="value-prop-section fade-up-element">
+            <p class="value-prop-text">Each week I share what I'm building, breaking, and learning</p>
+        </div>
+
+        <!-- Email CTA -->
+        <div class="footer-email-section fade-up-element" data-delay="100">
+            <div class="footer-email-container">
+                <input type="email" placeholder="email...." class="footer-email-input">
+                <button type="submit" class="footer-join-button">ride along</button>
+            </div>
+        </div>
+
+        <!-- Footer Row -->
+        <div class="footer-bottom-row fade-up-element" data-delay="400">
+            <div class="footer-copyright">
+                <span>DRAFT INC 2025</span>
+            </div>
+            <div class="footer-credit">
+                <span>SITE BY CHRISTOPHER GIROUX</span>
+            </div>
+        </div>
+
+        <!-- Large Logo Background -->
+        <div class="footer-logo-background fade-up-element" data-delay="300">
+            <img src="assets/footer-01.webp" alt="DRAFT" class="footer-logo-img" loading="lazy">
+        </div>
+    </div>
+</section>
+
+<!-- SVG Filters for Glass Effect -->
+<svg style="display: none">
+    <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.01 0.01" numOctaves="3" seed="42" result="noise" />
+        <feGaussianBlur in="noise" stdDeviation="0.8" result="blur" />
+        <feDisplacementMap in="SourceGraphic" in2="blur" scale="12" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+    <filter id="glass-blur" primitiveUnits="objectBoundingBox">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="0.02" result="blur" />
+        <feDisplacementMap in="blur" scale="2" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+    <filter id="toggle-glass-distortion" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.008 0.008" numOctaves="2" seed="92" result="noise" />
+        <feGaussianBlur in="noise" stdDeviation="0.02" result="blur" />
+        <feDisplacementMap in="SourceGraphic" in2="blur" scale="6" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+</svg>
 
 </body>
 </html>
