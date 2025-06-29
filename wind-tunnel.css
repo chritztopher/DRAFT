@@ -36,6 +36,14 @@ canvas {
     object-fit: contain;
 }
 
+/* Mobile optimization: disable canvas interaction to prevent scroll interference */
+@media (max-width: 768px) and (pointer: coarse) and (hover: none) {
+    canvas {
+        pointer-events: none;
+        touch-action: pan-y pan-x;
+    }
+}
+
 /* Fade overlays for smooth transition to black at top and bottom */
 .fade-overlay-top {
     position: absolute;
@@ -193,7 +201,112 @@ button:active {
     color: rgba(255, 255, 255, 1);
 }
 
+/* Mobile Navigation: Hamburger Menu */
+.hamburger-menu {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 8px;
+    box-shadow: none;
+}
 
+.hamburger-menu:focus,
+.hamburger-menu:hover,
+.hamburger-menu:active {
+    outline: none;
+    border: none;
+    box-shadow: none;
+    background: none;
+}
+
+.hamburger-line {
+    width: 24px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+    background: rgba(255, 255, 255, 1);
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+    background: rgba(255, 255, 255, 1);
+}
+
+/* Mobile Navigation Overlay */
+.mobile-nav-overlay {
+    display: none;
+    position: fixed;
+    top: 100px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(15px);
+    z-index: 1500;
+    padding: 2rem;
+}
+
+.mobile-nav-overlay.active {
+    display: block;
+}
+
+.mobile-nav-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+    padding-top: 2rem;
+}
+
+.mobile-nav-item {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 400;
+    font-family: 'Roboto Mono', monospace;
+    padding: 1rem 0;
+    transition: color 0.3s ease;
+}
+
+.mobile-nav-item:hover {
+    color: rgba(255, 255, 255, 1);
+}
+
+.mobile-time-display {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-time-location {
+    font-size: 0.75rem;
+    color: #888888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    font-weight: 300;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.mobile-time-clock {
+    font-size: 1.1rem;
+    color: #888888;
+    font-weight: 500;
+    font-family: 'Roboto Mono', monospace;
+}
 
 /* Scroll Animation Classes */
 .fade-up-element {
@@ -335,8 +448,6 @@ button:active {
 .newsletter-card * {
     text-decoration: none !important;
 }
-
-
 
 .newsletter-card {
     transition: all 0.3s ease;
@@ -824,11 +935,15 @@ button:active {
     }
     
     .nav-links {
-        gap: 20px;
+        display: none;
     }
     
-    .nav-link {
-        font-size: 14px;
+    .hamburger-menu {
+        display: flex;
+    }
+    
+    .mobile-nav-overlay {
+        top: 85px;
     }
     
     .glass-email-card {
@@ -1017,8 +1132,6 @@ button:active {
     box-shadow: none;
     text-shadow: none;
 }
-
-
 
 .footer-join-button:active {
     position: absolute;

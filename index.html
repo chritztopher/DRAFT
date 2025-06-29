@@ -17,6 +17,10 @@
     
     <link rel="stylesheet" type="text/css" href="wind-tunnel.css">
 
+    <!-- Mobile Menu Script -->
+    <script type="text/javascript" src="lib/mobile-menu.js"></script>
+    <script type="text/javascript" src="lib/time-display.js"></script>
+
     <script id="obstacle_render_fragment" type="x-shader/x-fragment">
         precision highp float;
 
@@ -371,8 +375,26 @@
                 <a href="newsletters.html" class="nav-link">newsletters</a>
                 <a href="#" class="nav-link">about</a>
             </div>
+            <!-- Hamburger Menu Button (Mobile Only) -->
+            <button class="hamburger-menu" onclick="toggleMobileMenu()">
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+            </button>
         </div>
     </nav>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobile-nav" onclick="closeMobileMenuOnOverlay(event)">
+        <div class="mobile-nav-content" onclick="event.stopPropagation()">
+            <a href="newsletters.html" class="mobile-nav-item">newsletters</a>
+            <a href="#" class="mobile-nav-item">about</a>
+            <div class="mobile-time-display">
+                <div class="mobile-time-location">Phoenix, AZ</div>
+                <div class="mobile-time-clock" id="mobile-phoenix-time"></div>
+            </div>
+        </div>
+    </div>
 
     <!-- Email Capture Card -->
     <div class="glass-email-card hero-fade-element" data-hero-delay="300">

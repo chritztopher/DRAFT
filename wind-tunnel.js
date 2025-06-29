@@ -12,6 +12,15 @@ const CONFIG = {
     RESIZE_DEBOUNCE: 250
 };
 
+/**
+ * Detect mobile/tablet devices for touch optimization
+ * Conservative detection to preserve desktop cursor interaction while optimizing mobile performance
+ * @returns {boolean} true if device is mobile/tablet, false for desktop computers
+ */
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
 let actualWidth = CONFIG.BASE_WIDTH;
 let actualHeight = CONFIG.BASE_HEIGHT;
 let gridWidth = actualWidth / CONFIG.GRID_DIVISOR;
@@ -107,23 +116,29 @@ function init() {
     cursorCtx.imageSmoothingEnabled = true;
     cursorCtx.imageSmoothingQuality = 'high';
 
-    // Add mouse event listeners for cursor tracking
-    canvas.addEventListener('mousemove', function(event) {
-        const rect = canvas.getBoundingClientRect();
-        // Calculate precise mouse position accounting for canvas scaling
-        cursorX = Math.round((event.clientX - rect.left) * (actualWidth / rect.width));
-        cursorY = Math.round((event.clientY - rect.top) * (actualHeight / rect.height));
-        
-        // Clamp to canvas bounds to prevent edge artifacts
-        cursorX = Math.max(0, Math.min(cursorX, actualWidth - 1));
-        cursorY = Math.max(0, Math.min(cursorY, actualHeight - 1));
-    });
+    // Add mouse event listeners for cursor tracking (desktop only)
+    if (!isMobileDevice()) {
+        canvas.addEventListener('mousemove', function(event) {
+            const rect = canvas.getBoundingClientRect();
+            // Calculate precise mouse position accounting for canvas scaling
+            cursorX = Math.round((event.clientX - rect.left) * (actualWidth / rect.width));
+            cursorY = Math.round((event.clientY - rect.top) * (actualHeight / rect.height));
+            
+            // Clamp to canvas bounds to prevent edge artifacts
+            cursorX = Math.max(0, Math.min(cursorX, actualWidth - 1));
+            cursorY = Math.max(0, Math.min(cursorY, actualHeight - 1));
+        });
 
-    canvas.addEventListener('mouseleave', function(event) {
-        // Move cursor off-screen when mouse leaves canvas
+        canvas.addEventListener('mouseleave', function(event) {
+            // Move cursor off-screen when mouse leaves canvas
+            cursorX = -100;
+            cursorY = -100;
+        });
+    } else {
+        // On mobile devices, keep cursor off-screen to prevent touch scroll interference
         cursorX = -100;
         cursorY = -100;
-    });
+    }
 
     // Load hero image and initialize canvas-based obstacle texture
     heroImage = new Image();  
