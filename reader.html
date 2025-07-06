@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Read DRAFT newsletters - Christopher's AI learning insights and experiments.">
+    <meta name="keywords" content="newsletter reader, AI learning, Christopher, technology insights">
+    <title>Newsletter Reader - DRAFT</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-03.png">
+    <link rel="shortcut icon" href="assets/favicon-03.png">
+    <link rel="apple-touch-icon" href="assets/favicon-03.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" type="text/css" href="newsletters.css">
+    <link rel="stylesheet" type="text/css" href="reader.css">
+    
+    <!-- Shared Utility Scripts -->
+    <script type="text/javascript" src="lib/animations.js" defer></script>
+    <script type="text/javascript" src="lib/time-display.js" defer></script>
+    <script type="text/javascript" src="lib/mobile-menu.js" defer></script>
+    <script type="text/javascript" src="lib/reader.js" defer></script>
+</head>
+<body>
+
+<div class="newsletters-layout">
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <a href="index.html" class="mobile-logo-link">
+            <img src="assets/logo.webp" alt="DRAFT" class="mobile-logo">
+        </a>
+        <button class="hamburger-menu" onclick="toggleMobileMenu()">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+        </button>
+    </header>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobile-nav" onclick="closeMobileMenuOnOverlay(event)">
+        <div class="mobile-nav-content" onclick="event.stopPropagation()">
+            <a href="index.html" class="mobile-nav-item">Home</a>
+            <a href="newsletters.html" class="mobile-nav-item">Newsletters</a>
+            <a href="about.html" class="mobile-nav-item">About</a>
+            <div class="mobile-time-display">
+                <div class="mobile-time-location">Phoenix, AZ</div>
+                <div class="mobile-time-clock" id="mobile-phoenix-time"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fixed Left Sidebar -->
+    <nav class="left-sidebar">
+        <div class="sidebar-content">
+            <div class="sidebar-logo">
+                <a href="index.html" class="sidebar-logo-link">
+                    <img src="assets/logo.webp" alt="DRAFT" class="logo-img">
+                </a>
+            </div>
+            <div class="sidebar-nav">
+                <a href="index.html" class="nav-item">Home</a>
+                <a href="newsletters.html" class="nav-item">Newsletters</a>
+                <a href="about.html" class="nav-item">About</a>
+            </div>
+            <div class="time-display">
+                <div class="time-location">Phoenix, AZ</div>
+                <div class="time-clock" id="phoenix-time"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Right Side Content -->
+    <main class="main-content">
+        <div class="content-container">
+            <!-- Loading State -->
+            <div id="loading-state" class="loading-container">
+                <div class="loading-text">Loading newsletter...</div>
+            </div>
+
+            <!-- Error State -->
+            <div id="error-state" class="error-container" style="display: none;">
+                <div class="error-content">
+                    <h1>Newsletter not found</h1>
+                    <p>The newsletter you're looking for doesn't exist or has been moved.</p>
+                    <a href="newsletters.html" class="back-button">← Back to Newsletters</a>
+                </div>
+            </div>
+
+            <!-- Newsletter Content -->
+            <article id="newsletter-content" class="newsletter-article" style="display: none;">
+                <!-- Page Header - Same structure as newsletters.html -->
+                <header class="page-header">
+                    <div class="header-content">
+                        <div class="header-columns">
+                            <div class="header-left">
+                                <h1 id="typewriter-title" class="typewriter-text">
+                                    <span class="line1" id="title-line1"></span><br>
+                                    <span class="line2" id="title-line2"></span>
+                                </h1>
+                            </div>
+                            <div class="header-right">
+                                <p>Christopher's ongoing thoughts from inside the work itself. Less polished insight, more thoughtful documentation.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </header>
+
+                <!-- Article Meta (moved outside of header) -->
+                <div class="article-meta">
+                    <time id="article-date" class="article-date"></time>
+                </div>
+
+                <!-- Featured Image -->
+                <div class="article-image-container">
+                    <div id="article-image" class="article-image"></div>
+                </div>
+
+                <!-- Body Content -->
+                <div class="article-body">
+                    <div id="article-content" class="content-text"></div>
+                </div>
+
+                <!-- Bottom Navigation -->
+                <div class="article-footer">
+                    <button id="footer-prev-button" class="prev-button-footer" style="display: none;">
+                        <span class="prev-button-arrow">←</span>
+                        <span class="prev-button-text">Previous</span>
+                    </button>
+                    <button id="footer-next-button" class="next-button-footer" style="display: none;">
+                        <span class="next-button-text">Next</span>
+                        <span class="next-button-arrow">→</span>
+                    </button>
+                </div>
+            </article>
+        </div>
+    </main>
+</div>
+
+<!-- SVG Filters for Glass Effect -->
+<svg style="display: none">
+    <filter id="sidebar-glass-distortion" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.01 0.01" numOctaves="3" seed="42" result="noise" />
+        <feGaussianBlur in="noise" stdDeviation="0.8" result="blur" />
+        <feDisplacementMap in="SourceGraphic" in2="blur" scale="8" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+</svg>
+
+</body>
+</html> 

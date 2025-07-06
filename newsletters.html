@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Newsletters - DRAFT</title>
+    <meta name="description" content="DRAFT Newsletters - Weekly AI learning insights, experiments, and behind-the-scenes progress on voice-first technology.">
+    <meta name="keywords" content="AI newsletters, machine learning, weekly insights, technology, voice AI, web development">
+    <title>Newsletters - DRAFT AI Learning Lab</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-03.png">
@@ -17,10 +19,10 @@
     <link rel="stylesheet" type="text/css" href="newsletters.css">
     
     <!-- Shared Utility Scripts -->
-    <script type="text/javascript" src="lib/animations.js"></script>
-    <script type="text/javascript" src="lib/time-display.js"></script>
-    <script type="text/javascript" src="lib/mobile-menu.js"></script>
-    <script type="text/javascript" src="lib/newsletters-utils.js"></script>
+    <script type="text/javascript" src="lib/animations.js" defer></script>
+    <script type="text/javascript" src="lib/time-display.js" defer></script>
+    <script type="text/javascript" src="lib/mobile-menu.js" defer></script>
+    <script type="text/javascript" src="lib/newsletters-utils.js" defer></script>
 </head>
 <body>
 
@@ -42,7 +44,7 @@
         <div class="mobile-nav-content" onclick="event.stopPropagation()">
             <a href="index.html" class="mobile-nav-item">Home</a>
             <a href="#" class="mobile-nav-item active">Newsletters</a>
-            <a href="#" class="mobile-nav-item">About</a>
+            <a href="about.html" class="mobile-nav-item">About</a>
             <div class="mobile-time-display">
                 <div class="mobile-time-location">Phoenix, AZ</div>
                 <div class="mobile-time-clock" id="mobile-phoenix-time"></div>
@@ -61,7 +63,7 @@
             <div class="sidebar-nav">
                 <a href="index.html" class="nav-item">Home</a>
                 <a href="#" class="nav-item active">Newsletters</a>
-                <a href="#" class="nav-item">About</a>
+                <a href="about.html" class="nav-item">About</a>
             </div>
             <div class="time-display">
                 <div class="time-location">Phoenix, AZ</div>
@@ -101,27 +103,27 @@
             <!-- Newsletter Grid -->
             <div class="newsletter-grid">
                 <!-- Newsletter Card 1 -->
-                <a href="/newsletters/how-to-automate-emails" class="newsletter-card fade-up-element">
+                <a href="reader.html?id=2025-06-21" class="newsletter-card fade-up-element">
                     <div class="card-thumbnail"></div>
                     <div class="card-content">
                         <p class="card-date">June 21, 2025</p>
+                        <h2 class="card-title">AI Regulation framework passes congress</h2>
+                        <p class="card-summary">New legislation sets groundbreaking precedent for AI governance and industry standards.</p>
+                    </div>
+                </a>
+
+                <!-- Newsletter Card 2 -->
+                <a href="reader.html?id=2025-06-14" class="newsletter-card fade-up-element" data-delay="100">
+                    <div class="card-thumbnail"></div>
+                    <div class="card-content">
+                        <p class="card-date">June 14, 2025</p>
                         <h2 class="card-title">How to automate your emails</h2>
                         <p class="card-summary">Automate, execute and save time with actionable AI tools for entrepreneurs and go-getters.</p>
                     </div>
                 </a>
 
-                <!-- Newsletter Card 2 -->
-                <a href="/newsletters/ai-regulation-framework" class="newsletter-card fade-up-element" data-delay="100">
-                    <div class="card-thumbnail"></div>
-                    <div class="card-content">
-                        <p class="card-date">June 14, 2025</p>
-                        <h2 class="card-title">AI Regulation Framework Passes Congress</h2>
-                        <p class="card-summary">New legislation sets groundbreaking precedent for AI governance and industry standards.</p>
-                    </div>
-                </a>
-
                 <!-- Newsletter Card 3 -->
-                <a href="/newsletters/quantum-computing-ml" class="newsletter-card fade-up-element" data-delay="200">
+                <a href="reader.html?id=2025-06-07" class="newsletter-card fade-up-element" data-delay="200">
                     <div class="card-thumbnail"></div>
                     <div class="card-content">
                         <p class="card-date">June 7, 2025</p>
@@ -131,7 +133,7 @@
                 </a>
 
                 <!-- Newsletter Card 4 -->
-                <a href="/newsletters/ai-native-startups" class="newsletter-card fade-up-element" data-delay="300">
+                <a href="reader.html?id=2025-05-31" class="newsletter-card fade-up-element" data-delay="300">
                     <div class="card-thumbnail"></div>
                     <div class="card-content">
                         <p class="card-date">May 31, 2025</p>
@@ -141,7 +143,7 @@
                 </a>
 
                 <!-- Newsletter Card 5 -->
-                <a href="/newsletters/openai-agi-milestone" class="newsletter-card fade-up-element" data-delay="400">
+                <a href="reader.html?id=2025-05-24" class="newsletter-card fade-up-element" data-delay="400">
                     <div class="card-thumbnail"></div>
                     <div class="card-content">
                         <p class="card-date">May 24, 2025</p>
@@ -151,7 +153,7 @@
                 </a>
 
                 <!-- Newsletter Card 6 -->
-                <a href="/newsletters/voice-ai-revolution" class="newsletter-card fade-up-element" data-delay="500">
+                <a href="reader.html?id=2025-05-17" class="newsletter-card fade-up-element" data-delay="500">
                     <div class="card-thumbnail"></div>
                     <div class="card-content">
                         <p class="card-date">May 17, 2025</p>

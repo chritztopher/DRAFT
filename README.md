@@ -42,11 +42,12 @@ Wind-Tunnel/
 │   └── [view icons].webp
 ├── lib/                    # Shared utilities
 │   ├── GlBoilerplate.js    # WebGL helper functions
-│   ├── vanilla-tilt.min.js # 3D tilt effects
 │   ├── animations.js       # Scroll animations
 │   ├── time-display.js     # Phoenix time display
 │   ├── mobile-menu.js      # Mobile navigation
-│   └── newsletters-utils.js # Newsletter functionality
+│   ├── newsletters-utils.js # Newsletter functionality
+│   ├── email-collection.js # Email collection system
+│   └── reader.js           # Newsletter reader functionality
 ├── wind-tunnel.html        # Main simulation page
 ├── wind-tunnel.css         # Main page styles
 ├── wind-tunnel.js          # Simulation logic

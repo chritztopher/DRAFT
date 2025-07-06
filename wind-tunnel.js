@@ -14,11 +14,24 @@ const CONFIG = {
 
 /**
  * Detect mobile/tablet devices for touch optimization
- * Conservative detection to preserve desktop cursor interaction while optimizing mobile performance
- * @returns {boolean} true if device is mobile/tablet, false for desktop computers
+ * Comprehensive detection using multiple methods to identify touch-only devices
+ * @returns {boolean} true if device is mobile/tablet without cursor, false for desktop/cursor devices
  */
 function isMobileDevice() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // User agent detection (basic fallback)
+    const userAgentMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // Modern detection using media queries and pointer capabilities
+    const isTouchOnly = window.matchMedia('(pointer: coarse)').matches && 
+                       window.matchMedia('(hover: none)').matches;
+    const isMobileSize = window.innerWidth <= 768;
+    
+    // Check if device has touch capability but no precise pointer
+    const hasTouchNoPointer = ('ontouchstart' in window || navigator.maxTouchPoints > 0) && 
+                             !window.matchMedia('(pointer: fine)').matches;
+    
+    // Return true if any mobile indicators are present
+    return userAgentMobile || (isTouchOnly && isMobileSize) || hasTouchNoPointer;
 }
 
 let actualWidth = CONFIG.BASE_WIDTH;
@@ -26,32 +39,62 @@ let actualHeight = CONFIG.BASE_HEIGHT;
 let gridWidth = actualWidth / CONFIG.GRID_DIVISOR;
 let gridHeight = actualHeight / CONFIG.GRID_DIVISOR;
 
-// Function to update canvas size based on viewport
+// Function to update canvas size based on viewport with intelligent responsive scaling
 function updateCanvasSize() {
     const canvas = document.getElementById("myCanvas");
     
-    // Maintain the original 2:1 aspect ratio for the simulation
-    // but scale to fill the viewport appropriately
     let viewportWidth = window.innerWidth;
     let viewportHeight = window.innerHeight;
     
-    // Calculate the best fit for 2:1 aspect ratio
-    let aspectRatio = CONFIG.ASPECT_RATIO; // width:height = 2:1
-    let canvasWidth, canvasHeight;
+    // Adaptive aspect ratio based on viewport
+    let aspectRatio;
+    let displayWidth, displayHeight, canvasLeft, canvasTop;
     
-    if (viewportWidth / viewportHeight > aspectRatio) {
-        // Viewport is wider than 2:1, constrain by height
-        canvasHeight = viewportHeight;
-        canvasWidth = canvasHeight * aspectRatio;
+    // Mobile optimization: use viewport dimensions more efficiently
+    if (viewportWidth <= 768) {
+        // Mobile: fill viewport completely for immersive experience
+        displayWidth = viewportWidth;
+        displayHeight = viewportHeight;
+        aspectRatio = displayWidth / displayHeight;
+        canvasLeft = 0;
+        canvasTop = 0;
     } else {
-        // Viewport is taller than 2:1, constrain by width
-        canvasWidth = viewportWidth;
-        canvasHeight = canvasWidth / aspectRatio;
+        // Desktop: use original 2:1 aspect ratio with smart scaling
+        aspectRatio = CONFIG.ASPECT_RATIO;
+        
+        // Calculate optimal size that fills more of the viewport
+        if (viewportWidth / viewportHeight > aspectRatio) {
+            // Wide viewport: scale by height but allow some overflow
+            displayHeight = Math.min(viewportHeight, viewportHeight * 1.2);
+            displayWidth = displayHeight * aspectRatio;
+            
+            // If still too narrow, scale by width
+            if (displayWidth < viewportWidth * 0.8) {
+                displayWidth = viewportWidth;
+                displayHeight = displayWidth / aspectRatio;
+            }
+        } else {
+            // Tall viewport: scale by width
+            displayWidth = viewportWidth;
+            displayHeight = displayWidth / aspectRatio;
+            
+            // If too tall, scale by height
+            if (displayHeight > viewportHeight * 1.1) {
+                displayHeight = viewportHeight;
+                displayWidth = displayHeight * aspectRatio;
+            }
+        }
+        
+        // Center the canvas
+        canvasLeft = (viewportWidth - displayWidth) / 2;
+        canvasTop = (viewportHeight - displayHeight) / 2;
     }
     
-    // Use a higher resolution for the simulation (scale up from base dimensions)
-    // This maintains the physics accuracy while allowing for crisp visuals
-    let simulationScale = Math.max(CONFIG.SIMULATION_SCALE_MIN, Math.min(canvasWidth / CONFIG.BASE_WIDTH, canvasHeight / CONFIG.BASE_HEIGHT));
+    // Calculate simulation scale for crisp visuals
+    let targetWidth = Math.max(CONFIG.BASE_WIDTH, displayWidth);
+    let targetHeight = Math.max(CONFIG.BASE_HEIGHT, displayHeight);
+    let simulationScale = Math.max(CONFIG.SIMULATION_SCALE_MIN, 
+        Math.min(targetWidth / CONFIG.BASE_WIDTH, targetHeight / CONFIG.BASE_HEIGHT));
     
     actualWidth = Math.floor(CONFIG.BASE_WIDTH * simulationScale);
     actualHeight = Math.floor(CONFIG.BASE_HEIGHT * simulationScale);
@@ -62,23 +105,19 @@ function updateCanvasSize() {
     canvas.width = actualWidth;
     canvas.height = actualHeight;
     
-    // Set canvas display size to fill viewport while maintaining aspect ratio
-    let displayWidth, displayHeight;
-    if (viewportWidth / viewportHeight > aspectRatio) {
-        // Viewport is wider than 2:1, constrain by height
-        displayHeight = viewportHeight;
-        displayWidth = displayHeight * aspectRatio;
-    } else {
-        // Viewport is taller than 2:1, constrain by width
-        displayWidth = viewportWidth;
-        displayHeight = displayWidth / aspectRatio;
-    }
-    
-    // Apply display size and center the canvas
+    // Apply responsive positioning and sizing
     canvas.style.width = displayWidth + 'px';
     canvas.style.height = displayHeight + 'px';
-    canvas.style.left = ((viewportWidth - displayWidth) / 2) + 'px';
-    canvas.style.top = ((viewportHeight - displayHeight) / 2) + 'px';
+    canvas.style.left = canvasLeft + 'px';
+    canvas.style.top = canvasTop + 'px';
+    
+    // Store canvas dimensions globally
+    window.canvasBounds = {
+        width: displayWidth,
+        height: displayHeight,
+        left: canvasLeft,
+        top: canvasTop
+    };
     
     // Update cursor canvas
     if (cursorCanvas) {
@@ -86,6 +125,8 @@ function updateCanvasSize() {
         cursorCanvas.height = actualHeight;
     }
 }
+
+
 
 let gl, ext;
 let view = "tx_material";
@@ -99,11 +140,15 @@ let heroImage = null; // Store the hero image for compositing
 
 // initialization functions
 function init() {
-    // Update canvas size first
     updateCanvasSize();
     
     let canvas = document.getElementById("myCanvas");
     gl = canvas.getContext("webgl");
+    
+    if (!gl) {
+        return;
+    }
+    
     ext = gl.getExtension("OES_texture_half_float");
 
     // Create cursor canvas for dynamic obstacle texture
@@ -116,8 +161,11 @@ function init() {
     cursorCtx.imageSmoothingEnabled = true;
     cursorCtx.imageSmoothingQuality = 'high';
 
-    // Add mouse event listeners for cursor tracking (desktop only)
-    if (!isMobileDevice()) {
+    // Add mouse event listeners for cursor tracking (desktop only and large screens only)
+    const isMobile = isMobileDevice();
+    const isSmallScreen = window.innerWidth <= 768;
+    
+    if (!isMobile && !isSmallScreen) {
         canvas.addEventListener('mousemove', function(event) {
             const rect = canvas.getBoundingClientRect();
             // Calculate precise mouse position accounting for canvas scaling
@@ -135,7 +183,8 @@ function init() {
             cursorY = -100;
         });
     } else {
-        // On mobile devices, keep cursor off-screen to prevent touch scroll interference
+        // Mobile/touch device or small screen: disable cursor interaction
+        // On mobile devices or small screens, keep cursor off-screen
         cursorX = -100;
         cursorY = -100;
     }
@@ -195,19 +244,15 @@ function init() {
     setUniformForProgram("advect_velocity", "u_textureSize", [gridWidth, gridHeight], "2f");
     setUniformForProgram("advect_velocity", "u_velocity", 0, "1i");
 
-    // Add window resize listener
-    window.addEventListener('resize', function() {
-        updateCanvasSize();
-        // Reset textures with new dimensions
-        resetTextures();
-    });
-
+    // Only reset window during initialization - not during runtime resizes
     resetWindow();
     render();
 }
 
 // render functions
 function render() {
+    
+    
     updateCursorObstacle();
     
     setSize(gridWidth, gridHeight);
@@ -239,8 +284,12 @@ function updateCursorObstacle() {
         cursorCtx.fillRect(0, 0, actualWidth, actualHeight);
     }
     
-    // Always add cursor circle on top if cursor is within canvas bounds
-    if (cursorX >= 0 && cursorY >= 0 && cursorX < actualWidth && cursorY < actualHeight) {
+    // Only add cursor circle on devices with actual cursors (not mobile/touch devices or small screens)
+    const isMobile = isMobileDevice();
+    const isSmallScreen = window.innerWidth <= 768; // Disable cursor on small screens regardless of device
+    const cursorInBounds = cursorX >= 0 && cursorY >= 0 && cursorX < actualWidth && cursorY < actualHeight;
+    
+    if (!isMobile && !isSmallScreen && cursorInBounds) {
         cursorCtx.fillStyle = 'black';
         cursorCtx.beginPath();
         // Add 0.5 offset for pixel-perfect alignment
@@ -356,6 +405,19 @@ function updateToggleButtons(activeView) {
 
 // Custom 3D Card Tilt Effects - Option 1: Custom mouse tracking
 function initCardTiltEffects() {
+    // Smart detection: Only disable on touch-primary devices (phones/tablets)
+    // Allow tilt effects on hybrid devices (laptops with touchscreens) when using mouse
+    const isTouchPrimary = window.matchMedia('(pointer: coarse)').matches;
+    const hasNoHover = window.matchMedia('(hover: none)').matches;
+    const isMobileSize = window.innerWidth <= 768;
+    
+    // Disable tilt only on devices that are primarily touch-based
+    const shouldDisableTilt = isTouchPrimary && hasNoHover && isMobileSize;
+    
+    if (shouldDisableTilt) {
+        return; // Exit early for touch-primary devices
+    }
+    
     const cards = document.querySelectorAll('.newsletter-card');
     
     cards.forEach(card => {
@@ -458,23 +520,93 @@ function initCardTiltEffects() {
 
 // program entry-point
 window.onload = function() {
-    init();
-    initCardTiltEffects();
+    try {
+        init();
+        initCardTiltEffects();
+    } catch (error) {
+        // Silent error handling for production
+    }
 };
 
-// Add resize event listener to handle viewport changes
-window.addEventListener('resize', function() {
-    updateCanvasSize();
+// Add resize event listener with iOS Safari-specific handling
+let resizeTimeout;
+let lastWidth = window.innerWidth;
+let lastHeight = window.innerHeight;
+let lastScrollTime = 0;
+let scrolling = false;
+
+// Detect iOS Safari specifically
+function isIOSSafari() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent) && !/CriOS|FxiOS|OPiOS|mercury/.test(navigator.userAgent);
+}
+
+// Track scroll events to differentiate from genuine resize events
+let scrollTimeout;
+window.addEventListener('scroll', function() {
+    lastScrollTime = Date.now();
+    scrolling = true;
     
-    // Update WebGL viewport
-    if (gl) {
-        gl.viewport(0, 0, actualWidth, actualHeight);
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(function() {
+        scrolling = false;
+    }, 500); // Consider scrolling finished after 500ms of no scroll events
+}, { passive: true });
+
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    
+    resizeTimeout = setTimeout(function() {
+        const currentWidth = window.innerWidth;
+        const currentHeight = window.innerHeight;
         
-        // Update shader uniforms with new dimensions
-        updateUniformForProgram("render", "u_screenSize", [actualWidth, actualHeight], "2f");
-        updateUniformForProgram("advect_material", "u_screenSize", [actualWidth, actualHeight], "2f");
+        // Calculate percentage change in viewport
+        const widthChange = Math.abs(currentWidth - lastWidth) / lastWidth;
+        const heightChange = Math.abs(currentHeight - lastHeight) / lastHeight;
         
-        // Reset textures with new dimensions
-        resetWindow();
-    }
+        // iOS Safari-specific logic
+        const isIOS = isIOSSafari();
+        const recentScroll = Date.now() - lastScrollTime < 1000; // Within 1 second of scroll
+        
+        // For iOS Safari, be much more conservative about resetting during scroll
+        let significantChange = false;
+        let shouldUpdateCanvas = true;
+        
+        if (isIOS) {
+            // On iOS Safari, only reset for major changes (>15%) or width changes (orientation)
+            // Height changes during scroll are usually just address bar showing/hiding
+            significantChange = widthChange > 0.15 || (heightChange > 0.15 && !recentScroll && !scrolling);
+            
+            // For iOS Safari, don't update canvas positioning during scroll-related height changes
+            // This prevents the canvas from shifting position when address bar shows/hides
+            shouldUpdateCanvas = !recentScroll && !scrolling || widthChange > 0.05;
+            
+            // iOS resize handling
+        } else {
+            // For other browsers, use the original logic
+            significantChange = widthChange > 0.05 || heightChange > 0.05;
+        }
+        
+        // Update canvas size only if it's not a scroll-related change on iOS
+        if (shouldUpdateCanvas) {
+            updateCanvasSize();
+            
+            // Update WebGL viewport
+            if (gl) {
+                gl.viewport(0, 0, actualWidth, actualHeight);
+                
+                // Update shader uniforms with new dimensions
+                updateUniformForProgram("render", "u_screenSize", [actualWidth, actualHeight], "2f");
+                updateUniformForProgram("advect_material", "u_screenSize", [actualWidth, actualHeight], "2f");
+            }
+        }
+        
+        // Always check for simulation reset regardless of canvas updates
+        if (gl && significantChange) {
+            resetWindow();
+        }
+        
+        // Update tracking variables
+        lastWidth = currentWidth;
+        lastHeight = currentHeight;
+    }, CONFIG.RESIZE_DEBOUNCE);
 });

@@ -3,8 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DRAFT - Christopher's AI learning lab featuring interactive wind tunnel simulations, weekly newsletters, and behind-the-scenes progress on voice-first technology.">
+    <meta name="keywords" content="AI, machine learning, wind tunnel, fluid dynamics, newsletters, voice technology, web development">
+    <meta name="author" content="Christopher">
+    <meta property="og:title" content="DRAFT - AI Learning Lab & Newsletter">
+    <meta property="og:description" content="Interactive wind tunnel simulations and weekly AI learning insights">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/bighero.png">
+    <meta name="theme-color" content="#000000">
 
-    <title>DRAFT</title>
+    <title>DRAFT - AI Learning Lab & Newsletter</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-03.png">
@@ -18,8 +26,10 @@
     <link rel="stylesheet" type="text/css" href="wind-tunnel.css">
 
     <!-- Mobile Menu Script -->
-    <script type="text/javascript" src="lib/mobile-menu.js"></script>
-    <script type="text/javascript" src="lib/time-display.js"></script>
+    <script type="text/javascript" src="lib/animations.js" defer></script>
+    <script type="text/javascript" src="lib/mobile-menu.js" defer></script>
+    <script type="text/javascript" src="lib/time-display.js" defer></script>
+    <script type="text/javascript" src="lib/email-collection.js" defer></script>
 
     <script id="obstacle_render_fragment" type="x-shader/x-fragment">
         precision highp float;
@@ -352,9 +362,14 @@
 
     <script type="text/javascript" src="lib/GlBoilerplate.js"></script>
     <script type="text/javascript" src="util.js"></script>
+    <!-- Shared Utility Scripts -->
+    <script type="text/javascript" src="lib/animations.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    
+    <!-- Wind Tunnel Script -->
     <script type="text/javascript" src="wind-tunnel.js"></script>
-    <script type="text/javascript" src="lib/vanilla-tilt.min.js"></script>
-    <script type="text/javascript" src="lib/animations.js"></script>
+
+
 </head>
 <body>
 
@@ -362,8 +377,7 @@
     <canvas id="myCanvas" width="1500px" height="750px"></canvas>
     
     <!-- Fade overlays for smooth transition -->
-    <div class="fade-overlay-top"></div>
-    <div class="fade-overlay-bottom"></div>
+    
     
     <!-- Glass Navbar -->
     <nav class="glass-navbar hero-fade-element" data-hero-delay="0">
@@ -373,7 +387,7 @@
             </div>
             <div class="nav-links">
                 <a href="newsletters.html" class="nav-link">newsletters</a>
-                <a href="#" class="nav-link">about</a>
+                <a href="about.html" class="nav-link">about</a>
             </div>
             <!-- Hamburger Menu Button (Mobile Only) -->
             <button class="hamburger-menu" onclick="toggleMobileMenu()">
@@ -388,7 +402,7 @@
     <div class="mobile-nav-overlay" id="mobile-nav" onclick="closeMobileMenuOnOverlay(event)">
         <div class="mobile-nav-content" onclick="event.stopPropagation()">
             <a href="newsletters.html" class="mobile-nav-item">newsletters</a>
-            <a href="#" class="mobile-nav-item">about</a>
+            <a href="about.html" class="mobile-nav-item">about</a>
             <div class="mobile-time-display">
                 <div class="mobile-time-location">Phoenix, AZ</div>
                 <div class="mobile-time-clock" id="mobile-phoenix-time"></div>
@@ -399,11 +413,15 @@
     <!-- Email Capture Card -->
     <div class="glass-email-card hero-fade-element" data-hero-delay="300">
         <div class="email-content">
-            <h2>Each week I share tools, projects, and lessons from the front seat of the learning curve.</h2>
-            <div class="email-input-container">
-                <input type="email" placeholder="email...." class="glass-input">
-                <button type="submit" class="ride-button">ride along</button>
-            </div>
+            <h2 class="email-card-title">Each week I share tools, projects, and lessons from the front seat of the learning curve.</h2>
+            <form class="hero-email-form">
+                <div class="email-input-container">
+                    <input type="email" placeholder="email...." class="glass-input" required>
+                    <button type="submit" class="ride-button rainbow-glow-hover">ride along</button>
+                </div>
+            </form>
+            <div class="lottie-container"></div>
+            <div class="success-message">You're in! Now you're legally obligated to nod thoughtfully while reading</div>
         </div>
     </div>
 
@@ -498,21 +516,17 @@
 
         <!-- Email CTA -->
         <div class="footer-email-section fade-up-element" data-delay="100">
-            <div class="footer-email-container">
-                <input type="email" placeholder="email...." class="footer-email-input">
-                <button type="submit" class="footer-join-button">ride along</button>
-            </div>
+            <form class="footer-email-form">
+                <div class="footer-email-container">
+                    <input type="email" placeholder="email...." class="footer-email-input" required>
+                    <button type="submit" class="footer-join-button rainbow-glow-hover">ride along</button>
+                </div>
+            </form>
+            <div class="lottie-container"></div>
+            <div class="success-message">You're in! Now you're legally obligated to nod thoughtfully while reading</div>
         </div>
 
-        <!-- Footer Row -->
-        <div class="footer-bottom-row fade-up-element" data-delay="400">
-            <div class="footer-copyright">
-                <span>DRAFT INC 2025</span>
-            </div>
-            <div class="footer-credit">
-                <span>SITE BY CHRISTOPHER GIROUX</span>
-            </div>
-        </div>
+
 
         <!-- Large Logo Background -->
         <div class="footer-logo-background fade-up-element" data-delay="300">
@@ -538,6 +552,212 @@
         <feDisplacementMap in="SourceGraphic" in2="blur" scale="6" xChannelSelector="R" yChannelSelector="G" />
     </filter>
 </svg>
+
+
+
+<script>
+    // Track current view state
+    let currentView = 'material'; // Default view
+    
+    // Initialize Email Collection
+    const emailCollector = new EmailCollection();
+    
+    // Watch for changes to toggle buttons to track view changes
+    function initViewTracking() {
+        // Check which button is active and set initial view
+        const activeButton = document.querySelector('.glass-toggle-btn.active');
+        if (activeButton) {
+            currentView = activeButton.getAttribute('data-view') || 'material';
+        }
+        updateBodyClass();
+        
+        // Watch for changes to toggle buttons
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'class' && mutation.target.classList.contains('glass-toggle-btn')) {
+                    if (mutation.target.classList.contains('active')) {
+                        const viewType = mutation.target.getAttribute('data-view');
+                        if (viewType && viewType !== currentView) {
+                            currentView = viewType;
+                            updateBodyClass();
+    
+                        }
+                    }
+                }
+            });
+        });
+        
+        // Start observing
+        const toggleButtons = document.querySelectorAll('.glass-toggle-btn');
+        toggleButtons.forEach(button => {
+            observer.observe(button, { attributes: true, attributeFilter: ['class'] });
+        });
+    }
+    
+    function updateBodyClass() {
+        document.body.className = document.body.className.replace(/view-\w+/g, '');
+        document.body.classList.add(`view-${currentView}`);
+
+    }
+    
+    // Initialize tracking after page loads
+    window.addEventListener('load', function() {
+        setTimeout(initViewTracking, 100); // Small delay to ensure everything is loaded
+    });
+    
+    // Email form submission handler
+    function showSuccessMessage(container, customMessage = null) {
+        // Add success class to hide form elements
+        container.classList.add('success');
+        
+        // Show Lottie animation first
+        const lottieContainer = container.querySelector('.lottie-container');
+        if (lottieContainer && typeof lottie !== 'undefined') {
+            lottieContainer.classList.add('show');
+            
+            // Load and play Lottie animation
+            const animation = lottie.loadAnimation({
+                container: lottieContainer,
+                renderer: 'svg',
+                loop: false,
+                autoplay: true,
+                path: 'assets/lottie.json'
+            });
+            
+            // Play animation at 1.5x speed for shorter duration
+            animation.setSpeed(1.5);
+            
+            // After animation completes, show success message
+            animation.addEventListener('complete', () => {
+                setTimeout(() => {
+                    lottieContainer.classList.remove('show');
+                    setTimeout(() => {
+                        const successMessage = container.querySelector('.success-message');
+                        if (successMessage) {
+                            // Use custom message or default
+                            const messageText = customMessage || "You're in! Now you're legally obligated to nod thoughtfully while reading";
+                            successMessage.textContent = messageText;
+                            successMessage.classList.add('show');
+                        }
+                    }, 300);
+                }, 200);
+            });
+        } else {
+            // Fallback: show success message immediately if Lottie is not available
+            const successMessage = container.querySelector('.success-message');
+            if (successMessage) {
+                const messageText = customMessage || "You're in! Now you're legally obligated to nod thoughtfully while reading";
+                successMessage.textContent = messageText;
+                successMessage.classList.add('show');
+            }
+        }
+    }
+    
+    // Show error message
+    function showErrorMessage(container, errorMessage) {
+        // Remove any existing success states
+        container.classList.remove('success');
+        
+        // Show error message
+        const successMessage = container.querySelector('.success-message');
+        if (successMessage) {
+            successMessage.textContent = errorMessage;
+            successMessage.style.color = '#ff6b6b';
+            successMessage.classList.add('show');
+            
+            // Reset color after 5 seconds
+            setTimeout(() => {
+                successMessage.style.color = '';
+                successMessage.classList.remove('show');
+            }, 5000);
+        }
+    }
+    
+    // Add loading state to button
+    function setButtonLoading(button, isLoading) {
+        if (isLoading) {
+            button.dataset.originalText = button.textContent;
+            button.textContent = 'sending...';
+            button.disabled = true;
+            button.style.opacity = '0.7';
+        } else {
+            button.textContent = button.dataset.originalText || 'ride along';
+            button.disabled = false;
+            button.style.opacity = '';
+        }
+    }
+    
+    // Handle form submissions
+    document.addEventListener('DOMContentLoaded', function() {
+        // Hero section form
+        const heroForm = document.querySelector('.hero-email-form');
+        if (heroForm) {
+            heroForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const emailInput = this.querySelector('input[type="email"]');
+                const submitButton = this.querySelector('button[type="submit"]');
+                const email = emailInput.value.trim();
+                
+                if (email) {
+                    const emailContent = this.closest('.email-content');
+                    
+                    // Set loading state
+                    setButtonLoading(submitButton, true);
+                    
+                    // Submit to Email Collection
+                    await emailCollector.handleSubscription(
+                        email,
+                        (message) => {
+                            // Success callback
+                            setButtonLoading(submitButton, false);
+                            showSuccessMessage(emailContent, message);
+                            emailInput.value = ''; // Clear the input
+                        },
+                        (errorMessage) => {
+                            // Error callback
+                            setButtonLoading(submitButton, false);
+                            showErrorMessage(emailContent, errorMessage);
+                        }
+                    );
+                }
+            });
+        }
+        
+        // Footer section form
+        const footerForm = document.querySelector('.footer-email-form');
+        if (footerForm) {
+            footerForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const emailInput = this.querySelector('input[type="email"]');
+                const submitButton = this.querySelector('button[type="submit"]');
+                const email = emailInput.value.trim();
+                
+                if (email) {
+                    const footerContainer = this.closest('.footer-container');
+                    
+                    // Set loading state
+                    setButtonLoading(submitButton, true);
+                    
+                    // Submit to Email Collection
+                    await emailCollector.handleSubscription(
+                        email,
+                        (message) => {
+                            // Success callback
+                            setButtonLoading(submitButton, false);
+                            showSuccessMessage(footerContainer, message);
+                            emailInput.value = ''; // Clear the input
+                        },
+                        (errorMessage) => {
+                            // Error callback
+                            setButtonLoading(submitButton, false);
+                            showErrorMessage(footerContainer, errorMessage);
+                        }
+                    );
+                }
+            });
+        }
+    });
+</script>
 
 </body>
 </html>

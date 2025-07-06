@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin dashboard for managing DRAFT newsletter subscriptions.">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Email Collection Admin - DRAFT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #007cba;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .emails-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .emails-header {
+            background: #007cba;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .emails-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .email-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 15px;
+            align-items: center;
+        }
+        .email-item:last-child {
+            border-bottom: none;
+        }
+        .email-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .email-address {
+            font-weight: bold;
+            color: #333;
+        }
+        .email-name {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .email-timestamp {
+            color: #999;
+            font-size: 0.8em;
+        }
+        .email-source {
+            background: #e7f3ff;
+            color: #007cba;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+        .actions {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .btn {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: #005a8b;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #666;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📧 Email Collection Admin</h1>
+        <p>Manage newsletter subscriptions from Wind Tunnel website</p>
+    </div>
+
+    <div class="stats" id="stats">
+        <div class="stat-card">
+            <div class="stat-number" id="total-emails">0</div>
+            <div class="stat-label">Total Subscriptions</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="today-emails">0</div>
+            <div class="stat-label">Today</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="this-week-emails">0</div>
+            <div class="stat-label">This Week</div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn" onclick="refreshData()">🔄 Refresh</button>
+        <button class="btn btn-secondary" onclick="exportEmails()">📥 Export CSV</button>
+        <button class="btn btn-secondary" onclick="clearAll()">🗑️ Clear All</button>
+        <a href="index.html" class="btn btn-secondary">← Back to Website</a>
+    </div>
+
+    <div class="emails-container">
+        <div class="emails-header">
+            <h3>📋 Collected Emails</h3>
+            <span id="emails-count">0 emails</span>
+        </div>
+        <div class="emails-list" id="emails-list">
+            <!-- Emails will be populated here -->
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>💡 <strong>Tip:</strong> Open your browser's console to see real-time notifications when new emails are collected!</p>
+        <p>Email data is stored locally in your browser's localStorage.</p>
+    </div>
+
+    <script>
+        function getStoredEmails() {
+            try {
+                return JSON.parse(localStorage.getItem('newsletter_emails') || '[]');
+            } catch (error) {
+                console.error('Error getting stored emails:', error);
+                return [];
+            }
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString();
+        }
+
+        function calculateStats(emails) {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+            const todayCount = emails.filter(email => new Date(email.timestamp) >= today).length;
+            const weekCount = emails.filter(email => new Date(email.timestamp) >= weekAgo).length;
+
+            return {
+                total: emails.length,
+                today: todayCount,
+                week: weekCount
+            };
+        }
+
+        function renderEmails() {
+            const emails = getStoredEmails();
+            const stats = calculateStats(emails);
+            
+            // Update stats
+            document.getElementById('total-emails').textContent = stats.total;
+            document.getElementById('today-emails').textContent = stats.today;
+            document.getElementById('this-week-emails').textContent = stats.week;
+            document.getElementById('emails-count').textContent = `${stats.total} emails`;
+
+            // Render email list
+            const emailsList = document.getElementById('emails-list');
+            
+            if (emails.length === 0) {
+                emailsList.innerHTML = `
+                    <div class="empty-state">
+                        <h3>📭 No emails collected yet</h3>
+                        <p>Visit your website and try subscribing to see emails appear here!</p>
+                        <a href="index.html" class="btn">Visit Website</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort emails by timestamp (newest first)
+            emails.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            emailsList.innerHTML = emails.map(email => `
+                <div class="email-item">
+                    <div class="email-info">
+                        <div class="email-address">${email.email}</div>
+                        ${email.firstName || email.lastName ? 
+                            `<div class="email-name">${email.firstName} ${email.lastName}</div>` : 
+                            ''
+                        }
+                    </div>
+                    <div class="email-timestamp">${formatDate(email.timestamp)}</div>
+                    <div class="email-source">${email.source || 'website'}</div>
+                </div>
+            `).join('');
+        }
+
+        function refreshData() {
+            renderEmails();
+
+        }
+
+        function exportEmails() {
+            const emails = getStoredEmails();
+            
+            if (emails.length === 0) {
+                alert('No emails to export!');
+                return;
+            }
+
+            // Create CSV content
+            const headers = ['Email', 'First Name', 'Last Name', 'Timestamp', 'Source'];
+            const csvContent = [
+                headers.join(','),
+                ...emails.map(email => [
+                    `"${email.email}"`,
+                    `"${email.firstName || ''}"`,
+                    `"${email.lastName || ''}"`,
+                    `"${email.timestamp}"`,
+                    `"${email.source || 'website'}"`
+                ].join(','))
+            ].join('\n');
+
+            // Download CSV
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `newsletter-emails-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+
+
+        }
+
+        function clearAll() {
+            if (confirm('Are you sure you want to delete all collected emails? This cannot be undone.')) {
+                localStorage.removeItem('newsletter_emails');
+                renderEmails();
+    
+                alert('All emails have been cleared!');
+            }
+        }
+
+        // Initialize the page
+        renderEmails();
+
+        // Auto-refresh every 30 seconds
+        setInterval(renderEmails, 30000);
+
+
+    </script>
+</body>
+</html> 
