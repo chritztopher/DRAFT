@@ -711,6 +711,31 @@ body {
         flex-shrink: 1;
         min-width: 0;
     }
+    
+    /* Fix header text cutoff on mobile */
+    .header-left h1 {
+        font-size: clamp(1rem, 4vw, 1.3rem);
+        line-height: 1.2;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+    }
+    
+    .typewriter-text .line1,
+    .typewriter-text .line2 {
+        white-space: normal !important;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
+    }
+    
+    .page-header {
+        padding: 0 1rem;
+    }
+    
+    .content-container {
+        padding: clamp(1rem, 4vw, 1.5rem);
+    }
 }
 
 
@@ -732,6 +757,26 @@ body {
     
     .mobile-nav-item {
         font-size: clamp(1rem, 4vw, 1.25rem);
+    }
+    
+    /* Extra small devices header fix */
+    .header-left h1 {
+        font-size: clamp(0.9rem, 5vw, 1.2rem) !important;
+        line-height: 1.1;
+    }
+    
+    .typewriter-text .line1,
+    .typewriter-text .line2 {
+        font-size: inherit;
+        line-height: inherit;
+    }
+    
+    .page-header {
+        padding: 0 0.75rem;
+    }
+    
+    .content-container {
+        padding: clamp(0.75rem, 4vw, 1.25rem);
     }
 }
 
