@@ -724,9 +724,9 @@ body {
     
     .typewriter-text .line1,
     .typewriter-text .line2 {
-        transform: scale(0.85);
+        transform: scale(0.7);
         transform-origin: left center;
-        max-width: 110%;
+        max-width: 130%;
     }
 }
 
@@ -758,13 +758,27 @@ body {
     
     .typewriter-text .line1,
     .typewriter-text .line2 {
-        transform: scale(0.75);
+        transform: scale(0.55);
         transform-origin: left center;
-        max-width: 120%;
+        max-width: 150%;
     }
     
     .header-columns {
         gap: 1rem !important;
+    }
+}
+
+@media (max-width: 360px) {
+    /* Very small screens - most aggressive scaling */
+    .header-left h1 {
+        font-size: 0.9rem;
+    }
+    
+    .typewriter-text .line1,
+    .typewriter-text .line2 {
+        transform: scale(0.45);
+        transform-origin: left center;
+        max-width: 180%;
     }
 }
 
