@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" type="text/css" href="newsletters.css">
+    <link rel="stylesheet" type="text/css" href="newsletters.css?v=2025010704">
     <link rel="stylesheet" type="text/css" href="reader.css">
     
     <!-- Shared Utility Scripts -->
@@ -80,12 +80,11 @@
                 <!-- Page Header with Typewriter Animation -->
                 <header class="page-header">
                     <div class="header-content">
-                        <div class="about-header-columns">
-                            <div class="about-header-left">
-                                <h1 id="typewriter-title" class="typewriter-text">
-                                    <span class="line1" id="title-line1"></span><br>
-                                    <span class="line2" id="title-line2"></span><br>
-                                    <span class="line3" id="title-line3"></span>
+                        <div class="header-columns">
+                            <div class="header-left">
+                                <h1 class="typewriter-text">
+                                    <span class="line1">Hello! I'm Christopher. A self taught</span><br>
+                                    <span class="line2">web dev trying to build something awesome!</span>
                                 </h1>
                             </div>
                         </div>
@@ -142,102 +141,12 @@
     </filter>
 </svg>
 
-<script>
-// Typewriter animation for the about page
-document.addEventListener('DOMContentLoaded', function() {
-    const line1Element = document.getElementById('title-line1');
-    const line2Element = document.getElementById('title-line2');
-    const line3Element = document.getElementById('title-line3');
-    
-    // Check screen size for responsive text
-    const isMobile = window.innerWidth <= 480;
-    const isTablet = window.innerWidth <= 768;
-    
-    let line1Text, line2Text, line3Text;
-    
-    if (isMobile) {
-        // Break text into two lines for mobile screens
-        line1Text = "Hello! I'm Christopher.";
-        line2Text = "A self taught web dev trying to build something awesome!";
-        line3Text = "";
-    } else if (isTablet) {
-        // Break text for tablets - keep two lines
-        line1Text = "Hello! I'm Christopher. A self taught";
-        line2Text = "web dev trying to build something awesome!";
-        line3Text = "";
-    } else {
-        // Original text for desktop - keep two lines
-        line1Text = "Hello! I'm Christopher. A self taught";
-        line2Text = "web dev trying to build something awesome!";
-        line3Text = "";
-    }
-    
-    let line1Index = 0;
-    let line2Index = 0;
-    let line3Index = 0;
-    let isLine1Complete = false;
-    let isLine2Complete = false;
-    
-    function typeWriter() {
-        if (!isLine1Complete) {
-            if (line1Index < line1Text.length) {
-                line1Element.textContent += line1Text.charAt(line1Index);
-                line1Index++;
-                setTimeout(typeWriter, 25);
-            } else {
-                isLine1Complete = true;
-                setTimeout(typeWriter, 100);
-            }
-        } else if (!isLine2Complete) {
-            if (line2Index < line2Text.length) {
-                line2Element.textContent += line2Text.charAt(line2Index);
-                line2Index++;
-                setTimeout(typeWriter, 25);
-            } else {
-                isLine2Complete = true;
-                if (line3Text.length > 0) {
-                    setTimeout(typeWriter, 100);
-                }
-            }
-        } else {
-            if (line3Index < line3Text.length) {
-                line3Element.textContent += line3Text.charAt(line3Index);
-                line3Index++;
-                setTimeout(typeWriter, 25);
-            }
-        }
-    }
-    
-    // Start the typewriter animation
-    setTimeout(typeWriter, 200);
-});
-</script>
+
 
 <style>
 /* About page specific styles */
 .about-article {
     padding: 0;
-}
-
-.about-header-columns {
-    display: flex;
-    align-items: flex-start;
-    gap: 40px;
-    margin: 0; /* Remove any default margins */
-    padding: 0; /* Remove any default padding */
-}
-
-.about-header-left {
-    flex: 1;
-    margin: 0; /* Remove any default margins */
-    padding: 0; /* Remove any default padding */
-    overflow: hidden; /* Prevent horizontal overflow */
-}
-
-.typewriter-text {
-    overflow: hidden;
-    word-wrap: break-word;
-    hyphens: auto;
 }
 
 .about-content-body {
@@ -321,81 +230,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-/* Tablet landscape - optimize for 900px-1024px */
-@media (min-width: 900px) and (max-width: 1024px) {
-    .about-content-body {
-        gap: 60px;
-        margin-top: 50px;
-        padding: 0 1.5rem;
-    }
-    
-    .about-right-column {
-        flex: 0 0 400px;
-    }
-    
-    .about-text {
-        font-size: 15px;
-        line-height: 1.6;
-    }
-    
-    .about-header-left h1 {
-        font-size: 1.5rem !important;
-        line-height: 1.3 !important;
-    }
-    
-    .typewriter-text .line1,
-    .typewriter-text .line2,
-    .typewriter-text .line3 {
-        font-size: 1.5rem;
-        line-height: 1.3;
-    }
-    
-    .page-header {
-        padding: 0 1.5rem;
-    }
-}
-
-/* Tablet portrait - optimize for 769px-899px */
-@media (min-width: 769px) and (max-width: 899px) {
-    .about-content-body {
-        gap: 50px;
-        margin-top: 45px;
-        padding: 0 1.25rem;
-    }
-    
-    .about-right-column {
-        flex: 0 0 350px;
-    }
-    
-    .about-text {
-        font-size: 15px;
-        line-height: 1.6;
-    }
-    
-    .about-header-left h1 {
-        font-size: 1.375rem !important;
-        line-height: 1.3 !important;
-    }
-    
-    .typewriter-text .line1,
-    .typewriter-text .line2,
-    .typewriter-text .line3 {
-        font-size: 1.375rem;
-        line-height: 1.3;
-    }
-    
-    .page-header {
-        padding: 0 1.25rem;
-    }
-}
-
-/* Responsive design */
+/* Mobile responsive for about content */
 @media (max-width: 768px) {
     .about-content-body {
         flex-direction: column;
         gap: 40px;
         margin-top: 40px;
-        padding: 0 1rem; /* Reduce padding on mobile */
+        padding: 0 1rem;
     }
     
     .about-right-column {
@@ -413,33 +254,13 @@ document.addEventListener('DOMContentLoaded', function() {
         font-size: 15px;
         line-height: 1.6;
     }
-    
-        /* Mobile header text sizing */
-    .about-header-left h1 {
-        font-size: 1rem !important;
-        line-height: 1.2 !important;
-        margin: 0 !important;
-    }
-    
-    .typewriter-text .line1,
-    .typewriter-text .line2,
-    .typewriter-text .line3 {
-        font-size: 1rem;
-        line-height: 1.2;
-    }
-    
-    .page-header {
-        margin-bottom: 1.5rem;
-        padding: 0 1rem;
-        margin-top: 1rem; /* Add top margin to push away from navbar */
-    }
 }
 
 @media (max-width: 480px) {
     .about-content-body {
         gap: 30px;
         margin-top: 30px;
-        padding: 0 0.75rem; /* Even smaller padding on very small screens */
+        padding: 0 0.75rem;
     }
     
     .about-text {
@@ -449,55 +270,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     .about-image-card {
         padding: 12px;
-    }
-    
-    /* Extra small screen header text */
-    .about-header-left h1 {
-        font-size: 0.85rem !important;
-        line-height: 1.1 !important;
-    }
-    
-    .typewriter-text .line1,
-    .typewriter-text .line2,
-    .typewriter-text .line3 {
-        font-size: 0.85rem;
-        line-height: 1.1;
-    }
-    
-    .page-header {
-        margin-bottom: 1rem;
-        padding: 0 0.75rem;
-        margin-top: 0.5rem;
-    }
-}
-
-@media (max-width: 360px) {
-    /* Very small screens */
-    .about-header-left h1 {
-        font-size: 0.75rem !important;
-        line-height: 1.0 !important;
-    }
-    
-    .typewriter-text .line1,
-    .typewriter-text .line2,
-    .typewriter-text .line3 {
-        font-size: 0.75rem;
-        line-height: 1.0;
-    }
-    
-    .about-text {
-        font-size: 12px;
-        line-height: 1.4;
-    }
-    
-    .about-content-body {
-        padding: 0 0.5rem;
-    }
-    
-    .page-header {
-        padding: 0 0.5rem;
-        margin-top: 0.25rem;
-        margin-bottom: 0.75rem;
     }
 }
 </style>
