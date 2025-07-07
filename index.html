@@ -23,7 +23,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" type="text/css" href="wind-tunnel.css">
+    <link rel="stylesheet" type="text/css" href="wind-tunnel.css?v=2025010701">
 
     <!-- Mobile Menu Script -->
     <script type="text/javascript" src="lib/animations.js" defer></script>
@@ -362,8 +362,6 @@
 
     <script type="text/javascript" src="lib/GlBoilerplate.js"></script>
     <script type="text/javascript" src="util.js"></script>
-    <!-- Shared Utility Scripts -->
-    <script type="text/javascript" src="lib/animations.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
     
     <!-- Wind Tunnel Script -->
@@ -559,8 +557,8 @@
     // Track current view state
     let currentView = 'material'; // Default view
     
-    // Initialize Email Collection
-    const emailCollector = new EmailCollection();
+    // Email collection instance - will be initialized after DOM loads
+    let emailCollector = null;
     
     // Watch for changes to toggle buttons to track view changes
     function initViewTracking() {
@@ -689,6 +687,14 @@
     
     // Handle form submissions
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Email Collection after DOM is loaded
+        try {
+            emailCollector = new EmailCollection();
+        } catch (error) {
+            console.error('Failed to initialize EmailCollection:', error);
+            return; // Exit if email collection can't be initialized
+        }
+        
         // Hero section form
         const heroForm = document.querySelector('.hero-email-form');
         if (heroForm) {
@@ -698,7 +704,7 @@
                 const submitButton = this.querySelector('button[type="submit"]');
                 const email = emailInput.value.trim();
                 
-                if (email) {
+                if (email && emailCollector) {
                     const emailContent = this.closest('.email-content');
                     
                     // Set loading state
@@ -732,7 +738,7 @@
                 const submitButton = this.querySelector('button[type="submit"]');
                 const email = emailInput.value.trim();
                 
-                if (email) {
+                if (email && emailCollector) {
                     const footerContainer = this.closest('.footer-container');
                     
                     // Set loading state

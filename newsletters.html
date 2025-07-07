@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" type="text/css" href="newsletters.css">
+    <link rel="stylesheet" type="text/css" href="newsletters.css?v=2025010701">
     
     <!-- Shared Utility Scripts -->
     <script type="text/javascript" src="lib/animations.js" defer></script>
@@ -43,7 +43,7 @@
     <div class="mobile-nav-overlay" id="mobile-nav" onclick="closeMobileMenuOnOverlay(event)">
         <div class="mobile-nav-content" onclick="event.stopPropagation()">
             <a href="index.html" class="mobile-nav-item">Home</a>
-            <a href="#" class="mobile-nav-item active">Newsletters</a>
+            <a href="newsletters.html" class="mobile-nav-item active">Newsletters</a>
             <a href="about.html" class="mobile-nav-item">About</a>
             <div class="mobile-time-display">
                 <div class="mobile-time-location">Phoenix, AZ</div>
@@ -62,7 +62,7 @@
             </div>
             <div class="sidebar-nav">
                 <a href="index.html" class="nav-item">Home</a>
-                <a href="#" class="nav-item active">Newsletters</a>
+                <a href="newsletters.html" class="nav-item active">Newsletters</a>
                 <a href="about.html" class="nav-item">About</a>
             </div>
             <div class="time-display">
@@ -86,16 +86,18 @@
                             </h1>
                         </div>
                         <div class="header-right">
-                            <p>christopher's ongoing thoughts from inside the work itself. Less polished insight, more thoughtful documentation.</p>
+                            <div class="filter-container">
+                                <select class="filter-dropdown">
+                                    <option value="recent">Most Recent</option>
+                                    <option value="oldest">Oldest</option>
+                                    <option value="a-z">A–Z</option>
+                                    <option value="z-a">Z–A</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="filter-container">
-                        <select class="filter-dropdown">
-                            <option value="recent">Most Recent</option>
-                            <option value="oldest">Oldest</option>
-                            <option value="a-z">A–Z</option>
-                            <option value="z-a">Z–A</option>
-                        </select>
+                    <div class="header-subtext">
+                        <p>christopher's ongoing thoughts from inside the work itself. Less polished insight, more thoughtful documentation.</p>
                     </div>
                 </div>
             </header>

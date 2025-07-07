@@ -1,0 +1,25 @@
+{
+  "name": "wind-tunnel",
+  "version": "1.0.0",
+  "description": "An interactive wind tunnel visualization with fluid dynamics simulation, featuring a modern newsletter subscription interface.",
+  "main": "util.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "dev": "npx http-server . -p 3000 -o",
+    "start": "npx http-server . -p 3000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chritztopher/DRAFT.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chritztopher/DRAFT/issues"
+  },
+  "homepage": "https://github.com/chritztopher/DRAFT#readme"
+}

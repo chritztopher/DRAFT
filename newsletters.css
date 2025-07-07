@@ -157,7 +157,7 @@ body {
 
 /* Page Header */
 .page-header {
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     position: relative;
 }
 
@@ -166,12 +166,16 @@ body {
 }
 
 .header-columns {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: clamp(1.5rem, 3vw, 3rem);
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    gap: 2rem;
     align-items: start;
     min-height: fit-content;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.header-left {
+    grid-column: 1 !important;
 }
 
 .header-left h1 {
@@ -248,18 +252,48 @@ body {
 }
 
 .header-right {
-    display: flex;
-    flex-direction: column;
-    grid-column: 1 / -1;
-    margin-top: 0.5rem;
+    display: flex !important;
+    align-items: flex-start;
+    justify-content: flex-end;
+    grid-column: 2 !important;
+    align-self: start;
+    width: auto;
+    margin-left: auto;
 }
 
-.header-right p {
+/* FORCE HEADER LAYOUT - OVERRIDE ALL */
+.page-header .header-content .header-columns {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    gap: 2rem !important;
+    align-items: start !important;
+    width: 100% !important;
+}
+
+.page-header .header-content .header-columns .header-left {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+}
+
+.page-header .header-content .header-columns .header-right {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: flex-start !important;
+}
+
+/* Header subtext section */
+.header-subtext {
+    margin-top: 0.75rem;
+    grid-column: 1 / -1 !important;
+}
+
+.header-subtext p {
     font-size: clamp(0.75rem, 1.2vw, 0.8rem);
     color: #BBBBBB;
     line-height: 1.4;
     margin: 0;
-    margin-top: 0;
     max-width: 60%;
     word-wrap: break-word;
 }
@@ -268,8 +302,7 @@ body {
 .filter-container {
     position: relative;
     display: flex;
-    align-items: center;
-    justify-self: end;
+    align-items: flex-start;
     flex-shrink: 0;
 }
 
@@ -456,34 +489,44 @@ body {
 }
 
 /* Fluid responsive breakpoints */
-@media (max-width: 1200px) {
-    .header-columns {
-        grid-template-columns: 1fr;
-        gap: clamp(1rem, 2vw, 1.5rem);
-        margin-bottom: 1.5rem;
+@media (max-width: 900px) {
+    .page-header .header-content {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
     }
     
-    .filter-container {
-        position: static;
-        margin-top: clamp(0.75rem, 2vw, 1.5rem);
-        justify-self: start;
-        grid-column: 1;
-        order: 3;
+    /* Title first */
+    .page-header .header-content .header-columns .header-left {
+        order: 1 !important;
+        margin-bottom: 0.5rem;
     }
     
-    .header-right {
-        grid-column: 1;
-        margin-top: 1rem;
-        order: 2;
+    /* Subtext second */
+    .page-header .header-content .header-subtext {
+        order: 2 !important;
+        margin-top: 0.5rem !important;
+        margin-bottom: 1rem !important;
     }
     
-    .header-left {
-        order: 1;
-    }
-    
-    .header-right p {
+    .page-header .header-content .header-subtext p {
         max-width: 100%;
-        margin-top: 0.25rem;
+    }
+    
+    /* Filter button third (last) */
+    .page-header .header-content .header-columns .header-right {
+        order: 3 !important;
+        position: static !important;
+        justify-content: flex-start !important;
+        margin-top: 0;
+        margin-bottom: 1rem;
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+    
+    /* Ensure header-columns doesn't interfere with ordering */
+    .page-header .header-content .header-columns {
+        display: contents !important;
     }
 }
 
@@ -649,16 +692,12 @@ body {
         grid-template-columns: 1fr;
     }
     
-    .header-columns {
-        grid-template-columns: 1fr;
-    }
-    
     .card-thumbnail {
         height: clamp(160px, 25vw, 200px);
     }
 }
 
-/* Removed - now handled by fluid design */
+
 
 @media (max-width: 480px) {
     .mobile-header {
