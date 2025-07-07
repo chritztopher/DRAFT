@@ -712,29 +712,21 @@ body {
         min-width: 0;
     }
     
-    /* Fix header text cutoff on mobile */
+    /* Fix mobile header text overflow */
     .header-left h1 {
-        font-size: clamp(1rem, 4vw, 1.3rem);
-        line-height: 1.2;
-        word-break: break-word;
-        overflow-wrap: break-word;
-        hyphens: auto;
+        font-size: 1.1rem;
+    }
+    
+    .header-left {
+        overflow: hidden;
+        max-width: 100%;
     }
     
     .typewriter-text .line1,
     .typewriter-text .line2 {
-        white-space: normal !important;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        max-width: 100%;
-    }
-    
-    .page-header {
-        padding: 0 1rem;
-    }
-    
-    .content-container {
-        padding: clamp(1rem, 4vw, 1.5rem);
+        transform: scale(0.85);
+        transform-origin: left center;
+        max-width: 110%;
     }
 }
 
@@ -759,24 +751,20 @@ body {
         font-size: clamp(1rem, 4vw, 1.25rem);
     }
     
-    /* Extra small devices header fix */
+    /* Extra small screens - further reduce header size */
     .header-left h1 {
-        font-size: clamp(0.9rem, 5vw, 1.2rem) !important;
-        line-height: 1.1;
+        font-size: 1rem;
     }
     
     .typewriter-text .line1,
     .typewriter-text .line2 {
-        font-size: inherit;
-        line-height: inherit;
+        transform: scale(0.75);
+        transform-origin: left center;
+        max-width: 120%;
     }
     
-    .page-header {
-        padding: 0 0.75rem;
-    }
-    
-    .content-container {
-        padding: clamp(0.75rem, 4vw, 1.25rem);
+    .header-columns {
+        gap: 1rem !important;
     }
 }
 
