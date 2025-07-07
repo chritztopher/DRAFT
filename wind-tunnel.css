@@ -1317,17 +1317,7 @@ canvas {
 
 }
 
-/* Large mobile screens - removed fade overlay overrides, now handled by JavaScript */
-@media (min-width: 600px) and (max-width: 768px) {
-}
 
-/* Small tablet screens - removed fade overlay overrides, now handled by JavaScript */
-@media (min-width: 769px) and (max-width: 900px) {
-}
-
-/* Tablet screens - all orientations - removed fade overlay overrides, now handled by JavaScript */
-@media (min-width: 901px) and (max-width: 1024px) {
-}
 
 /* Tablet landscape and medium screens */
 @media (min-width: 901px) and (max-width: 1024px) and (orientation: landscape) {
