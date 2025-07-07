@@ -176,6 +176,8 @@ body {
 
 .header-left {
     grid-column: 1 !important;
+    position: relative;
+    z-index: 999;
 }
 
 .header-left h1 {
@@ -186,11 +188,15 @@ body {
     line-height: 1.3;
     word-wrap: break-word;
     hyphens: auto;
+    position: relative;
+    z-index: 1000;
 }
 
 /* Typewriter Animation */
 .typewriter-text {
     overflow: hidden;
+    position: relative;
+    z-index: 1000;
 }
 
 .typewriter-text .line1,
@@ -201,6 +207,8 @@ body {
     overflow: hidden;
     width: 0;
     animation-fill-mode: forwards;
+    position: relative;
+    z-index: 1001;
 }
 
 .typewriter-text .line1 {
