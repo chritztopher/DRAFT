@@ -695,6 +695,22 @@ body {
     .card-thumbnail {
         height: clamp(160px, 25vw, 200px);
     }
+    
+    /* Fix filter dropdown on mobile */
+    .filter-dropdown {
+        min-width: auto;
+        width: auto;
+        max-width: 120px;
+        font-size: 0.7rem;
+        padding: 0.375rem 1.5rem 0.375rem 0.75rem;
+        background-position: right 0.5rem center;
+        background-size: 0.7rem;
+    }
+    
+    .filter-container {
+        flex-shrink: 1;
+        min-width: 0;
+    }
 }
 
 
